@@ -28,9 +28,9 @@ public class AlbumController {
 	private EntityLinks entityLinks;
 
 	@RequestMapping(method = RequestMethod.GET)
-	public Collection<Album> getAllAlbum() {
+	public Collection<Resource<Album>> getAllAlbum() {
 		return Arrays.asList("123", "456", "789").stream().map(n -> {
-			final Album a = new Album(n);
+			final Resource<Album> a = new Resource<>(new Album(n));
 			a.add(entityLinks.linkToSingleResource(Album.class, n));
 			return a;
 		}).collect(Collectors.toList());
@@ -38,9 +38,9 @@ public class AlbumController {
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
 	@ResponseBody
-	public Album getAlbumDetails(@PathVariable(value = "id") final String albumId) {
+	public Resource<Album> getAlbumDetails(@PathVariable(value = "id") final String albumId) {
 
-		final Album album = new Album(albumId);
+		final Resource<Album> album = new Resource<>(new Album(albumId));
 		album.add(linkTo(methodOn(AlbumController.class).getAlbumDetails(albumId)).withSelfRel());
 		album.add(linkTo(methodOn(AlbumController.class).getSongs(albumId)).withRel("songs"));
 
@@ -60,8 +60,8 @@ public class AlbumController {
 	@RequestMapping(method = RequestMethod.POST)
 	@ResponseStatus(value = HttpStatus.CREATED)
 	@ResponseBody
-	public Album createAlbum(final String name) {
-		final Album album = new Album(name);
+	public Resource<Album> createAlbum(final String name) {
+		final Resource<Album> album = new Resource<>(new Album(name));
 		album.add(entityLinks.linkToSingleResource(Album.class, name));
 
 		return album;

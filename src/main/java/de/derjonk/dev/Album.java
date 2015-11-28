@@ -1,23 +1,34 @@
 package de.derjonk.dev;
 
-import org.springframework.hateoas.ResourceSupport;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class Album extends ResourceSupport {
+@Entity
+public class Album {
 
-	private final String albumId;
+	@Id
+	@GeneratedValue(strategy = GenerationType.AUTO)
+	private long id;
+
+	private String name;
+
+	protected Album() {
+	}
 
 	@JsonCreator
-	public Album(@JsonProperty("albumId") final String albumId) {
+	public Album(@JsonProperty("albumId") final String name) {
 		super();
-		this.albumId = albumId;
+		this.name = name;
 	}
 
 	@JsonProperty("albumId")
 	public String getAlbumId() {
-		return albumId;
+		return name;
 	}
 
 }

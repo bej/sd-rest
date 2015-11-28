@@ -1,26 +1,33 @@
 package de.derjonk.dev;
 
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.linkTo;
-import static org.springframework.hateoas.mvc.ControllerLinkBuilder.methodOn;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.EntityLinks;
 import org.springframework.hateoas.ExposesResourceFor;
 import org.springframework.hateoas.Resource;
+import org.springframework.hateoas.ResourceProcessor;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
 
-@RestController
+@Controller
 @ExposesResourceFor(Song.class)
 @RequestMapping("/song")
-public class SongController {
+public class SongController implements ResourceProcessor<Resource<Song>> {
+
+	@Autowired
+	private EntityLinks entityLinks;
 
 	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
-	@ResponseBody
 	public Resource<Song> getSong(@PathVariable("id") final String id) {
-		final Resource<Song> song = new Resource<Song>(new Song(id));
-		song.add(linkTo(methodOn(SongController.class).getSong(id)).withSelfRel());
+		return new Resource<Song>(new Song(id));
+	}
+
+	@Override
+	public Resource<Song> process(final Resource<Song> song) {
+		System.out.println("process resource");
+		song.add(entityLinks.linkToSingleResource(Song.class, song.getContent().getName()));
 		return song;
 	}
+
 }
